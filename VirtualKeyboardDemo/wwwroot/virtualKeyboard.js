@@ -21,10 +21,25 @@ function initVirtualKeyboard() {
         manualHosts.forEach(host => {
             const input = getInnerInput(host);
             if (input) {
+                // Set both attributes on the actual <input> inside Shadow DOM
                 input.setAttribute('virtualkeyboardpolicy', 'manual');
+                input.setAttribute('inputmode', 'none');
+
+                // Hide keyboard on focus — use setTimeout to fire AFTER the browser
+                // processes the focus event (which may re-open the keyboard)
                 input.addEventListener('focus', () => {
                     navigator.virtualKeyboard.hide();
+                    // Re-hide after a tick to catch browser's auto-open
+                    setTimeout(() => navigator.virtualKeyboard.hide(), 0);
+                    setTimeout(() => navigator.virtualKeyboard.hide(), 100);
                 });
+
+                // Also hide on click/pointerdown (fires before focus on mobile)
+                input.addEventListener('pointerdown', (e) => {
+                    navigator.virtualKeyboard.hide();
+                    setTimeout(() => navigator.virtualKeyboard.hide(), 0);
+                });
+
                 console.log("VirtualKeyboard: manual policy applied to:", host.id || host.tagName);
             }
         });
