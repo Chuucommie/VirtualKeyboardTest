@@ -12,6 +12,10 @@ function getInnerInput(hostEl) {
     return null;
 }
 
+// Flag: when true, keyboard was opened intentionally via ⌨ button,
+// so focus/pointerdown listeners must NOT hide it.
+let _vkManuallyShown = false;
+
 function initVirtualKeyboard() {
     if ('virtualKeyboard' in navigator) {
         navigator.virtualKeyboard.overlaysContent = true;
@@ -25,19 +29,25 @@ function initVirtualKeyboard() {
                 input.setAttribute('virtualkeyboardpolicy', 'manual');
                 input.setAttribute('inputmode', 'none');
 
-                // Hide keyboard on focus — use setTimeout to fire AFTER the browser
-                // processes the focus event (which may re-open the keyboard)
+                // Hide keyboard on focus — but ONLY if we didn't just open it
+                // intentionally via the ⌨ button (flag _vkManuallyShown).
                 input.addEventListener('focus', () => {
+                    if (_vkManuallyShown) return;
                     navigator.virtualKeyboard.hide();
-                    // Re-hide after a tick to catch browser's auto-open
-                    setTimeout(() => navigator.virtualKeyboard.hide(), 0);
-                    setTimeout(() => navigator.virtualKeyboard.hide(), 100);
+                    setTimeout(() => { if (!_vkManuallyShown) navigator.virtualKeyboard.hide(); }, 0);
+                    setTimeout(() => { if (!_vkManuallyShown) navigator.virtualKeyboard.hide(); }, 100);
                 });
 
                 // Also hide on click/pointerdown (fires before focus on mobile)
                 input.addEventListener('pointerdown', (e) => {
+                    if (_vkManuallyShown) return;
                     navigator.virtualKeyboard.hide();
-                    setTimeout(() => navigator.virtualKeyboard.hide(), 0);
+                    setTimeout(() => { if (!_vkManuallyShown) navigator.virtualKeyboard.hide(); }, 0);
+                });
+
+                // Reset flag on blur so next focus can hide again
+                input.addEventListener('blur', () => {
+                    _vkManuallyShown = false;
                 });
 
                 console.log("VirtualKeyboard: manual policy applied to:", host.id || host.tagName);
@@ -67,9 +77,20 @@ function showKeyboardFor(elementId) {
     if (!host) return;
     const input = getInnerInput(host);
     if (!input) return;
+
+    // Set flag BEFORE focus so the focus/pointerdown listeners don't hide
+    // the keyboard we're about to open.
+    _vkManuallyShown = true;
     input.focus();
     if ('virtualKeyboard' in navigator) {
         navigator.virtualKeyboard.show();
+        // Re-show after a tick in case the browser's focus handler closed it
+        setTimeout(() => {
+            if (_vkManuallyShown) navigator.virtualKeyboard.show();
+        }, 0);
+        setTimeout(() => {
+            if (_vkManuallyShown) navigator.virtualKeyboard.show();
+        }, 100);
     }
 }
 
