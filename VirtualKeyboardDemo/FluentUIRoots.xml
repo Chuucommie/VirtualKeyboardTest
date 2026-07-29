@@ -1,0 +1,5 @@
+<linker>
+  <assembly fullname="Microsoft.FluentUI.AspNetCore.Components" fullname="*">
+    <type fullname="*" />
+  </assembly>
+</linker>

@@ -5,41 +5,31 @@
 <PageTitle>Virtual Keyboard Demo</PageTitle>
 
 <div style="padding: 24px; max-width: 800px; margin: 0 auto;">
+    <h2 style="margin-bottom: 24px;">Virtual Keyboard API Demo</h2>
 
-    <FluentStack Orientation="Orientation.Vertical" HorizontalGap="20" Style="width: 100%;">
+    <div style="background: var(--neutral-layer-1, #fafafa); border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+        <h4 style="margin-bottom: 12px;">Standard Field</h4>
+        <FluentTextInput @bind-Value="standardValue"
+                         Placeholder="Tap to type..."
+                         Style="width: 100%;" />
+    </div>
 
-        <h2>Virtual Keyboard API Demo</h2>
-
-        <FluentCard Style="padding: 20px;">
-            <FluentStack Orientation="Orientation.Vertical" HorizontalGap="12">
-                <h4>Standard Field</h4>
-                <FluentTextInput @bind-Value="standardValue"
-                                 Placeholder="Tap to type..."
-                                 Style="width: 100%;" />
-            </FluentStack>
-        </FluentCard>
-
-        <FluentCard Style="padding: 20px; border: 2px solid var(--accent-fill-rest);">
-            <FluentStack Orientation="Orientation.Vertical" HorizontalGap="12">
-                <h4>Hidden Keyboard Field</h4>
-                <FluentStack Orientation="Orientation.Horizontal" VerticalGap="8" Style="align-items: flex-end;">
-                    <FluentTextInput @bind-Value="manualValue"
-                                     Id="manual-input"
-                                     Placeholder="Keyboard stays hidden..."
-                                     AdditionalAttributes="manualKeyboardAttrs"
-                                     Style="flex: 1;" />
-                    <FluentButton ButtonAppearance="ButtonAppearance.Default"
-                                  OnClick="ClearInput"
-                                  Title="Cancella contenuto">✖</FluentButton>
-                    <FluentButton ButtonAppearance="ButtonAppearance.Primary"
-                                  OnClick="ShowKeyboard"
-                                  Title="Mostra tastiera">⌨</FluentButton>
-                </FluentStack>
-            </FluentStack>
-        </FluentCard>
-
-    </FluentStack>
-
+    <div style="background: var(--neutral-layer-1, #fafafa); border-radius: 8px; padding: 20px; border: 2px solid var(--accent-fill-rest, #0078d4); box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+        <h4 style="margin-bottom: 12px;">Hidden Keyboard Field</h4>
+        <div style="display: flex; gap: 8px; align-items: flex-end;">
+            <FluentTextInput @bind-Value="manualValue"
+                             Id="manual-input"
+                             Placeholder="Keyboard stays hidden..."
+                             AdditionalAttributes="manualKeyboardAttrs"
+                             Style="flex: 1;" />
+            <FluentButton ButtonAppearance="ButtonAppearance.Default"
+                          OnClick="ClearInput"
+                          Title="Cancella contenuto">✖</FluentButton>
+            <FluentButton ButtonAppearance="ButtonAppearance.Primary"
+                          OnClick="ShowKeyboard"
+                          Title="Mostra tastiera">⌨</FluentButton>
+        </div>
+    </div>
 </div>
 
 @code {
@@ -72,5 +62,6 @@
 
     public async ValueTask DisposeAsync()
     {
+        await Task.CompletedTask;
     }
 }

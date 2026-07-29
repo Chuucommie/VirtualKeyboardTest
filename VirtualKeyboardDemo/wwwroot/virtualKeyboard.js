@@ -15,6 +15,32 @@ function initVirtualKeyboard() {
     }
 }
 
+function initButtons() {
+    const clearBtn = document.getElementById('clear-btn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            const input = document.getElementById('manual-input');
+            if (input) {
+                input.value = '';
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        });
+    }
+
+    const keyboardBtn = document.getElementById('keyboard-btn');
+    if (keyboardBtn) {
+        keyboardBtn.addEventListener('click', () => {
+            const input = document.getElementById('manual-input');
+            if (input) {
+                input.focus();
+                if ('virtualKeyboard' in navigator) {
+                    navigator.virtualKeyboard.show();
+                }
+            }
+        });
+    }
+}
+
 function clearManualInput() {
     const input = document.getElementById('manual-input');
     if (input) {
@@ -34,5 +60,6 @@ function showVirtualKeyboard() {
 
 // Expose globally for Blazor JSInterop
 window.initVirtualKeyboard = initVirtualKeyboard;
+window.initButtons = initButtons;
 window.clearManualInput = clearManualInput;
 window.showVirtualKeyboard = showVirtualKeyboard;
