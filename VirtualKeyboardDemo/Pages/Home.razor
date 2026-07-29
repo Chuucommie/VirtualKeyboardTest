@@ -1,0 +1,48 @@
+﻿@page "/"
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<PageTitle>Virtual Keyboard Demo</PageTitle>
+
+<div class="container mt-4">
+    <h2>Virtual Keyboard API Demo</h2>
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card p-3 bg-light">
+                <h4>Standard Fields</h4>
+                <div class="mb-3">
+                    <input type="text" class="form-control" placeholder="Tap to type..." />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card p-3 border-primary">
+                <h4>Hidden Keyboard Fields</h4>
+                <div class="mb-3">
+                    <input type="text"
+                           class="form-control border-primary"
+                           virtualkeyboardpolicy="manual"
+                           placeholder="Keyboard stays hidden..." />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private IJSObjectReference? module;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await JS.InvokeAsync<IJSObjectReference>("import", "./virtualKeyboard.js");
+            await module.InvokeVoidAsync("initVirtualKeyboard");
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (module is not null) await module.DisposeAsync();
+    }
+}
