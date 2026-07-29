@@ -18,11 +18,25 @@
         <div class="col-md-6 mb-4">
             <div class="card p-3 border-primary">
                 <h4>Hidden Keyboard Fields</h4>
-                <div class="mb-3">
+                <div class="input-group mb-3">
                     <input type="text"
+                           @ref="manualInput"
+                           id="manual-input"
                            class="form-control border-primary"
                            virtualkeyboardpolicy="manual"
                            placeholder="Keyboard stays hidden..." />
+                    <button class="btn btn-outline-danger"
+                            type="button"
+                            title="Cancella contenuto"
+                            @onclick="ClearInput">
+                        ✖
+                    </button>
+                    <button class="btn btn-outline-success"
+                            type="button"
+                            title="Mostra tastiera"
+                            @onclick="ShowKeyboard">
+                        ⌨
+                    </button>
                 </div>
             </div>
         </div>
@@ -31,6 +45,7 @@
 
 @code {
     private IJSObjectReference? module;
+    private ElementReference manualInput;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -39,6 +54,16 @@
             module = await JS.InvokeAsync<IJSObjectReference>("import", "./virtualKeyboard.js");
             await module.InvokeVoidAsync("initVirtualKeyboard");
         }
+    }
+
+    private async Task ClearInput()
+    {
+        await module!.InvokeVoidAsync("clearInput", manualInput);
+    }
+
+    private async Task ShowKeyboard()
+    {
+        await module!.InvokeVoidAsync("showKeyboard", manualInput);
     }
 
     public async ValueTask DisposeAsync()

@@ -12,3 +12,21 @@ export function initVirtualKeyboard() {
         console.warn("VirtualKeyboard API is not supported in this browser.");
     }
 }
+
+export function clearInput(element) {
+    if (element) {
+        element.value = '';
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+}
+
+export function showKeyboard(element) {
+    if (!element) return;
+    element.focus();
+    if ('virtualKeyboard' in navigator) {
+        navigator.virtualKeyboard.show();
+    } else {
+        // Fallback: rfocus triggers keyboard on most browsers
+        element.focus({ preventScroll: true });
+    }
+}
