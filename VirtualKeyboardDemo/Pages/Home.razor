@@ -4,45 +4,53 @@
 
 <PageTitle>Virtual Keyboard Demo</PageTitle>
 
-<div class="container mt-4">
-    <h2>Virtual Keyboard API Demo</h2>
-    <div class="row mt-4">
-        <div class="col-md-6 mb-4">
-            <div class="card p-3 bg-light">
-                <h4>Standard Fields</h4>
-                <div class="mb-3">
-                    <input type="text" class="form-control" placeholder="Tap to type..." />
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 mb-4">
-            <div class="card p-3 border-primary">
-                <h4>Hidden Keyboard Fields</h4>
-                <div class="input-group mb-3">
-                    <input type="text"
-                           id="manual-input"
-                           class="form-control border-primary"
-                           virtualkeyboardpolicy="manual"
-                           placeholder="Keyboard stays hidden..." />
-                    <button class="btn btn-outline-danger"
-                            type="button"
-                            title="Cancella contenuto"
-                            @onclick="ClearInput">
-                        ✖
-                    </button>
-                    <button class="btn btn-outline-success"
-                            type="button"
-                            title="Mostra tastiera"
-                            @onclick="ShowKeyboard">
-                        ⌨
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+<div style="padding: 24px; max-width: 800px; margin: 0 auto;">
+
+    <FluentStack Orientation="Orientation.Vertical" HorizontalGap="20" Style="width: 100%;">
+
+        <h2>Virtual Keyboard API Demo</h2>
+
+        <FluentCard Style="padding: 20px;">
+            <FluentStack Orientation="Orientation.Vertical" HorizontalGap="12">
+                <h4>Standard Field</h4>
+                <FluentTextInput @bind-Value="standardValue"
+                                 Placeholder="Tap to type..."
+                                 Style="width: 100%;" />
+            </FluentStack>
+        </FluentCard>
+
+        <FluentCard Style="padding: 20px; border: 2px solid var(--accent-fill-rest);">
+            <FluentStack Orientation="Orientation.Vertical" HorizontalGap="12">
+                <h4>Hidden Keyboard Field</h4>
+                <FluentStack Orientation="Orientation.Horizontal" VerticalGap="8" Style="align-items: flex-end;">
+                    <FluentTextInput @bind-Value="manualValue"
+                                     Id="manual-input"
+                                     Placeholder="Keyboard stays hidden..."
+                                     AdditionalAttributes="manualKeyboardAttrs"
+                                     Style="flex: 1;" />
+                    <FluentButton ButtonAppearance="ButtonAppearance.Default"
+                                  OnClick="ClearInput"
+                                  Title="Cancella contenuto">✖</FluentButton>
+                    <FluentButton ButtonAppearance="ButtonAppearance.Primary"
+                                  OnClick="ShowKeyboard"
+                                  Title="Mostra tastiera">⌨</FluentButton>
+                </FluentStack>
+            </FluentStack>
+        </FluentCard>
+
+    </FluentStack>
+
 </div>
 
 @code {
+    private string standardValue = "";
+    private string manualValue = "";
+
+    private Dictionary<string, object> manualKeyboardAttrs = new()
+    {
+        { "virtualkeyboardpolicy", "manual" }
+    };
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -54,6 +62,7 @@
     private async Task ClearInput()
     {
         await JS.InvokeVoidAsync("clearManualInput");
+        manualValue = "";
     }
 
     private async Task ShowKeyboard()
