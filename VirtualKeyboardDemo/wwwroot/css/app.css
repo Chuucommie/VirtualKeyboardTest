@@ -2,8 +2,9 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-    overflow-y: auto;
+    overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
+    height: auto !important;
 }
 
 /* Floating bottom navigation bar */
@@ -64,6 +65,11 @@ html, body {
 /* Ensure content scrolls above the nav bar */
 .page {
     min-height: 100vh;
+}
+
+#app {
+    overflow-y: auto !important;
+    height: auto !important;
 }
 
 h1:focus {
