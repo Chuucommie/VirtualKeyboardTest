@@ -1,5 +1,69 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Floating bottom navigation bar */
+.floating-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: var(--neutral-layer-2, #fafafa);
+    border-top: 1px solid var(--neutral-stroke-rest, #d1d1d1);
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+    padding: 6px 0;
+    padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+    z-index: 1000;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 10px;
+    border: none;
+    background: transparent;
+    color: var(--neutral-foreground-hint, #616161);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nav-btn:active {
+    background: var(--neutral-layer-3, #f0f0f0);
+}
+
+.nav-btn.active {
+    color: var(--accent-fill-rest, #0078d4);
+    font-weight: 700;
+}
+
+.nav-icon {
+    font-size: 22px;
+    line-height: 1;
+}
+
+.nav-label {
+    font-size: 10px;
+    line-height: 1;
+}
+
+/* Ensure content scrolls above the nav bar */
+.page {
+    min-height: 100vh;
 }
 
 h1:focus {
