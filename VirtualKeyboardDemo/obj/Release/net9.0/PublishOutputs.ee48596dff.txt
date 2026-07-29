@@ -1,0 +1,1 @@
+/tmp/vk-dist/web.config

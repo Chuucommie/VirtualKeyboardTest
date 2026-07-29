@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VirtualKeyboardDemo</title>
+    <base href="/VirtualKeyboardTest/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link href="VirtualKeyboardDemo.styles.css" rel="stylesheet" />
+    <!-- Fluent UI Web Components -->
+    <link rel="stylesheet" href="_content/Microsoft.FluentUI.AspNetCore.Components/css/reboot.css" />
+    <script type="module" src="_content/Microsoft.FluentUI.AspNetCore.Components/Microsoft.FluentUI.AspNetCore.Components.lib.module.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+        <div class="loading-progress-text"></div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <script src="vk-fix.js"></script>
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        // Blazor WASM sets body{overflow:hidden;height:100vh} at runtime.
+        // Use a MutationObserver to continuously override it.
+        const fixScroll = () => {
+            document.body.style.setProperty('overflow-y', 'auto', 'important');
+            document.body.style.setProperty('height', 'auto', 'important');
+            document.body.style.setProperty('overflow-x', 'hidden', 'important');
+            document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
+            document.documentElement.style.setProperty('height', 'auto', 'important');
+            const app = document.getElementById('app');
+            if (app) {
+                app.style.setProperty('overflow', 'visible', 'important');
+                app.style.setProperty('height', 'auto', 'important');
+            }
+        };
+        // Fix immediately and observe future changes
+        fixScroll();
+        const obs = new MutationObserver(fixScroll);
+        obs.observe(document.body, { attributes: true, attributeFilter: ['style'] });
+        obs.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
+        // Also fix after a delay (Blazor sets styles after WASM init)
+        setTimeout(fixScroll, 1000);
+        setTimeout(fixScroll, 3000);
+    </script>
+</body>
+
+</html>
