@@ -30,10 +30,11 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="virtualKeyboard.js"></script>
-    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script src="_framework/blazor.webassembly.js"></script>
     <script>
-        // Start Blazor, then fix body overflow (Blazor WASM sets overflow:hidden + height:100vh)
-        Blazor.start().then(() => {
+        // Blazor WASM sets body{overflow:hidden;height:100vh} at runtime.
+        // Use a MutationObserver to continuously override it.
+        const fixScroll = () => {
             document.body.style.setProperty('overflow-y', 'auto', 'important');
             document.body.style.setProperty('height', 'auto', 'important');
             document.body.style.setProperty('overflow-x', 'hidden', 'important');
@@ -44,7 +45,15 @@
                 app.style.setProperty('overflow', 'visible', 'important');
                 app.style.setProperty('height', 'auto', 'important');
             }
-        });
+        };
+        // Fix immediately and observe future changes
+        fixScroll();
+        const obs = new MutationObserver(fixScroll);
+        obs.observe(document.body, { attributes: true, attributeFilter: ['style'] });
+        obs.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
+        // Also fix after a delay (Blazor sets styles after WASM init)
+        setTimeout(fixScroll, 1000);
+        setTimeout(fixScroll, 3000);
     </script>
 </body>
 
