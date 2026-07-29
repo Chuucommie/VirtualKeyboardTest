@@ -1,4 +1,6 @@
-export function initVirtualKeyboard() {
+// VirtualKeyboard API — functions exposed globally for Blazor interop
+
+function initVirtualKeyboard() {
     if ('virtualKeyboard' in navigator) {
         navigator.virtualKeyboard.overlaysContent = true;
         const manualInputs = document.querySelectorAll('[virtualkeyboardpolicy="manual"]');
@@ -7,26 +9,30 @@ export function initVirtualKeyboard() {
                 navigator.virtualKeyboard.hide();
             });
         });
-        console.log("Virtual Keyboard API initialized via module.");
+        console.log("Virtual Keyboard API initialized.");
     } else {
         console.warn("VirtualKeyboard API is not supported in this browser.");
     }
 }
 
-export function clearInput(element) {
-    if (element) {
-        element.value = '';
-        element.dispatchEvent(new Event('input', { bubbles: true }));
+function clearManualInput() {
+    const input = document.getElementById('manual-input');
+    if (input) {
+        input.value = '';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
     }
 }
 
-export function showKeyboard(element) {
-    if (!element) return;
-    element.focus();
+function showVirtualKeyboard() {
+    const input = document.getElementById('manual-input');
+    if (!input) return;
+    input.focus();
     if ('virtualKeyboard' in navigator) {
         navigator.virtualKeyboard.show();
-    } else {
-        // Fallback: rfocus triggers keyboard on most browsers
-        element.focus({ preventScroll: true });
     }
 }
+
+// Expose globally for Blazor JSInterop
+window.initVirtualKeyboard = initVirtualKeyboard;
+window.clearManualInput = clearManualInput;
+window.showVirtualKeyboard = showVirtualKeyboard;

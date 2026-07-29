@@ -20,7 +20,6 @@
                 <h4>Hidden Keyboard Fields</h4>
                 <div class="input-group mb-3">
                     <input type="text"
-                           @ref="manualInput"
                            id="manual-input"
                            class="form-control border-primary"
                            virtualkeyboardpolicy="manual"
@@ -44,30 +43,25 @@
 </div>
 
 @code {
-    private IJSObjectReference? module;
-    private ElementReference manualInput;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            module = await JS.InvokeAsync<IJSObjectReference>("import", "./virtualKeyboard.js");
-            await module.InvokeVoidAsync("initVirtualKeyboard");
+            await JS.InvokeVoidAsync("initVirtualKeyboard");
         }
     }
 
     private async Task ClearInput()
     {
-        await module!.InvokeVoidAsync("clearInput", manualInput);
+        await JS.InvokeVoidAsync("clearManualInput");
     }
 
     private async Task ShowKeyboard()
     {
-        await module!.InvokeVoidAsync("showKeyboard", manualInput);
+        await JS.InvokeVoidAsync("showVirtualKeyboard");
     }
 
     public async ValueTask DisposeAsync()
     {
-        if (module is not null) await module.DisposeAsync();
     }
 }
