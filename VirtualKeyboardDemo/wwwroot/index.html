@@ -30,7 +30,22 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="virtualKeyboard.js"></script>
-    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script>
+        // Start Blazor, then fix body overflow (Blazor WASM sets overflow:hidden + height:100vh)
+        Blazor.start().then(() => {
+            document.body.style.setProperty('overflow-y', 'auto', 'important');
+            document.body.style.setProperty('height', 'auto', 'important');
+            document.body.style.setProperty('overflow-x', 'hidden', 'important');
+            document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
+            document.documentElement.style.setProperty('height', 'auto', 'important');
+            const app = document.getElementById('app');
+            if (app) {
+                app.style.setProperty('overflow', 'visible', 'important');
+                app.style.setProperty('height', 'auto', 'important');
+            }
+        });
+    </script>
 </body>
 
 </html>
