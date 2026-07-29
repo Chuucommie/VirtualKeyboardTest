@@ -1,0 +1,56 @@
+@* Reusable field with hidden virtual keyboard + clear/show buttons *@
+@inject IJSRuntime JS
+
+<div style="display: flex; gap: 8px; align-items: flex-end; margin-bottom: 12px;">
+    <div style="flex: 1;">
+        @if (!string.IsNullOrEmpty(Label))
+        {
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--neutral-foreground-rest, #242424);">@Label</label>
+        }
+        <FluentTextInput Value="@Value"
+                         Id="@Id"
+                         Placeholder="@Placeholder"
+                         AdditionalAttributes="manualAttrs"
+                         Style="width: 100%;"
+                         ValueChanged="@OnValueChanged" />
+    </div>
+    <FluentButton ButtonAppearance="ButtonAppearance.Default"
+                  OnClick="@ClearField"
+                  Title="Cancella contenuto"
+                  Style="height: 40px; min-width: 40px;">✖</FluentButton>
+    <FluentButton ButtonAppearance="ButtonAppearance.Primary"
+                  OnClick="@ShowKeyboard"
+                  Title="Mostra tastiera"
+                  Style="height: 40px; min-width: 40px;">⌨</FluentButton>
+</div>
+
+@code {
+    [Parameter] public string Id { get; set; } = "";
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public string Placeholder { get; set; } = "";
+    [Parameter] public string Value { get; set; } = "";
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+
+    private Dictionary<string, object> manualAttrs = new()
+    {
+        { "virtualkeyboardpolicy", "manual" }
+    };
+
+    private async Task OnValueChanged(string val)
+    {
+        Value = val;
+        await ValueChanged.InvokeAsync(val);
+    }
+
+    private async Task ClearField()
+    {
+        await JS.InvokeVoidAsync("clearField", Id);
+        Value = "";
+        await ValueChanged.InvokeAsync("");
+    }
+
+    private async Task ShowKeyboard()
+    {
+        await JS.InvokeVoidAsync("showKeyboardFor", Id);
+    }
+}

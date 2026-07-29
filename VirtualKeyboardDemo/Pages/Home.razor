@@ -1,67 +1,54 @@
-﻿@page "/"
+@page "/"
 @inject IJSRuntime JS
+@inject NavigationManager Nav
 @implements IAsyncDisposable
 
-<PageTitle>Virtual Keyboard Demo</PageTitle>
+<PageTitle>Virtual Keyboard Demo — Home</PageTitle>
 
-<div style="padding: 24px; max-width: 800px; margin: 0 auto;">
-    <h2 style="margin-bottom: 24px;">Virtual Keyboard API Demo</h2>
+<div style="padding: 24px 0;">
+    <h2 style="margin-bottom: 8px;">Virtual Keyboard API Demo</h2>
+    <p style="color: var(--neutral-foreground-hint, #616161); margin-bottom: 24px;">
+        Test the VirtualKeyboard API across multiple pages. Fields marked with ⌨ have manual keyboard control.
+    </p>
 
     <div style="background: var(--neutral-layer-1, #fafafa); border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
-        <h4 style="margin-bottom: 12px;">Standard Field</h4>
-        <FluentTextInput @bind-Value="standardValue"
-                         Placeholder="Tap to type..."
-                         Style="width: 100%;" />
+        <h4 style="margin-bottom: 12px;">Standard Fields (keyboard opens on focus)</h4>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Search</label>
+            <FluentTextInput @bind-Value="standardValue" Placeholder="Tap to type — keyboard shows automatically" Style="width: 100%;" />
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Notes</label>
+            <FluentTextInput @bind-Value="standardValue2" Placeholder="Another standard field" Style="width: 100%;" />
+        </div>
     </div>
 
     <div style="background: var(--neutral-layer-1, #fafafa); border-radius: 8px; padding: 20px; border: 2px solid var(--accent-fill-rest, #0078d4); box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
-        <h4 style="margin-bottom: 12px;">Hidden Keyboard Field</h4>
-        <div style="display: flex; gap: 8px; align-items: flex-end;">
-            <FluentTextInput @bind-Value="manualValue"
-                             Id="manual-input"
-                             Placeholder="Keyboard stays hidden..."
-                             AdditionalAttributes="manualKeyboardAttrs"
-                             Style="flex: 1;" />
-            <FluentButton ButtonAppearance="ButtonAppearance.Default"
-                          OnClick="ClearInput"
-                          Title="Cancella contenuto">✖</FluentButton>
-            <FluentButton ButtonAppearance="ButtonAppearance.Primary"
-                          OnClick="ShowKeyboard"
-                          Title="Mostra tastiera">⌨</FluentButton>
-        </div>
+        <h4 style="margin-bottom: 12px;">Manual Keyboard Fields (use ⌨ button)</h4>
+        <ManualInputField Id="home-manual-1" Label="Hidden Keyboard Field 1" Placeholder="Keyboard stays hidden — use ⌨ button" @bind-Value="manual1" />
+        <ManualInputField Id="home-manual-2" Label="Hidden Keyboard Field 2" Placeholder="Keyboard stays hidden — use ⌨ button" @bind-Value="manual2" />
+        <ManualInputField Id="home-manual-3" Label="Hidden Keyboard Field 3" Placeholder="Keyboard stays hidden — use ⌨ button" @bind-Value="manual3" />
+    </div>
+
+    <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
+        <FluentButton ButtonAppearance="ButtonAppearance.Accent" OnClick="@(() => Nav.NavigateTo("customer"))">👤 Customer Form →</FluentButton>
+        <FluentButton ButtonAppearance="ButtonAppearance.Accent" OnClick="@(() => Nav.NavigateTo("billing"))">🧾 Billing Form →</FluentButton>
+        <FluentButton ButtonAppearance="ButtonAppearance.Accent" OnClick="@(() => Nav.NavigateTo("inventory"))">📦 Inventory Form →</FluentButton>
+        <FluentButton ButtonAppearance="ButtonAppearance.Accent" OnClick="@(() => Nav.NavigateTo("feedback"))">💬 Feedback Form →</FluentButton>
     </div>
 </div>
 
 @code {
     private string standardValue = "";
-    private string manualValue = "";
-
-    private Dictionary<string, object> manualKeyboardAttrs = new()
-    {
-        { "virtualkeyboardpolicy", "manual" }
-    };
+    private string standardValue2 = "";
+    private string manual1 = "";
+    private string manual2 = "";
+    private string manual3 = "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            await JS.InvokeVoidAsync("initVirtualKeyboard");
-        }
+        if (firstRender) await JS.InvokeVoidAsync("initVirtualKeyboard");
     }
 
-    private async Task ClearInput()
-    {
-        await JS.InvokeVoidAsync("clearManualInput");
-        manualValue = "";
-    }
-
-    private async Task ShowKeyboard()
-    {
-        await JS.InvokeVoidAsync("showVirtualKeyboard");
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await Task.CompletedTask;
-    }
+    public async ValueTask DisposeAsync() => await Task.CompletedTask;
 }

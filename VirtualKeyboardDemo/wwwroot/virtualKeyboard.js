@@ -1,12 +1,11 @@
 // VirtualKeyboard API — functions exposed globally for Blazor interop
 // Handles FluentTextInput web components (Shadow DOM) and standard inputs
+// Supports multiple fields via element ID parameters
 
 function getInnerInput(hostEl) {
-    // If it's a fluent-text-input web component, get the <input> from shadow DOM
     if (hostEl && hostEl.shadowRoot) {
         return hostEl.shadowRoot.querySelector('input');
     }
-    // If it's already a standard <input>, return it directly
     if (hostEl && hostEl.tagName === 'INPUT') {
         return hostEl;
     }
@@ -18,19 +17,15 @@ function initVirtualKeyboard() {
         navigator.virtualKeyboard.overlaysContent = true;
         console.log("Virtual Keyboard API supported. overlaysContent = true");
 
-        // Find all elements with virtualkeyboardpolicy="manual"
-        // These can be <fluent-text-input> web components or standard <input> elements
         const manualHosts = document.querySelectorAll('[virtualkeyboardpolicy="manual"]');
         manualHosts.forEach(host => {
             const input = getInnerInput(host);
             if (input) {
-                // Set the attribute on the actual <input> element inside shadow DOM
                 input.setAttribute('virtualkeyboardpolicy', 'manual');
-                // On focus, explicitly hide the virtual keyboard
                 input.addEventListener('focus', () => {
                     navigator.virtualKeyboard.hide();
                 });
-                console.log("VirtualKeyboard: manual policy applied to inner input:", input.id || input.tagName);
+                console.log("VirtualKeyboard: manual policy applied to:", host.id || host.tagName);
             }
         });
     } else {
@@ -38,22 +33,23 @@ function initVirtualKeyboard() {
     }
 }
 
-function clearManualInput() {
-    const host = document.getElementById('manual-input');
+function clearField(elementId) {
+    const host = document.getElementById(elementId);
+    if (!host) return;
     const input = getInnerInput(host);
     if (input) {
         input.value = '';
         input.dispatchEvent(new Event('input', { bubbles: true }));
-        // Also update the host element's value for FluentTextInput binding
-        if (host && host !== input) {
-            host.value = '';
-            host.dispatchEvent(new Event('input', { bubbles: true }));
-        }
+    }
+    if (host && host !== input) {
+        host.value = '';
+        host.dispatchEvent(new Event('input', { bubbles: true }));
     }
 }
 
-function showVirtualKeyboard() {
-    const host = document.getElementById('manual-input');
+function showKeyboardFor(elementId) {
+    const host = document.getElementById(elementId);
+    if (!host) return;
     const input = getInnerInput(host);
     if (!input) return;
     input.focus();
@@ -62,7 +58,13 @@ function showVirtualKeyboard() {
     }
 }
 
+// Legacy compat
+function clearManualInput() { clearField('manual-input'); }
+function showVirtualKeyboard() { showKeyboardFor('manual-input'); }
+
 // Expose globally for Blazor JSInterop
 window.initVirtualKeyboard = initVirtualKeyboard;
+window.clearField = clearField;
+window.showKeyboardFor = showKeyboardFor;
 window.clearManualInput = clearManualInput;
 window.showVirtualKeyboard = showVirtualKeyboard;

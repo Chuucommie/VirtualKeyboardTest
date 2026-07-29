@@ -1,0 +1,56 @@
+@page "/billing"
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<PageTitle>Billing Form</PageTitle>
+
+<div style="padding: 24px 0;">
+    <h2 style="margin-bottom: 8px;">🧾 Billing Form</h2>
+    <p style="color: var(--neutral-foreground-hint, #616161); margin-bottom: 24px;">
+        Invoice billing form with 9 fields — mix of standard and manual keyboard inputs.
+    </p>
+
+    <div style="background: var(--neutral-layer-1, #fafafa); border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+        <h4 style="margin-bottom: 16px;">Standard Fields</h4>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Invoice Number</label>
+            <FluentTextInput @bind-Value="invoiceNum" Placeholder="INV-2025-001" Style="width: 100%;" />
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Issue Date</label>
+            <FluentTextInput @bind-Value="issueDate" Placeholder="2025-07-09" Style="width: 100%;" />
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Due Date</label>
+            <FluentTextInput @bind-Value="dueDate" Placeholder="2025-08-09" Style="width: 100%;" />
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Currency</label>
+            <FluentTextInput @bind-Value="currency" Placeholder="EUR" Style="width: 100%;" />
+        </div>
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Payment Terms</label>
+            <FluentTextInput @bind-Value="paymentTerms" Placeholder="Net 30" Style="width: 100%;" />
+        </div>
+    </div>
+
+    <div style="background: var(--neutral-layer-1, #fafafa); border-radius: 8px; padding: 20px; border: 2px solid var(--accent-fill-rest, #0078d4); box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+        <h4 style="margin-bottom: 16px;">Manual Keyboard Fields (use ⌨ to open keyboard)</h4>
+        <ManualInputField Id="bill-manual-1" Label="Amount" Placeholder="€ 1,250.00" @bind-Value="amount" />
+        <ManualInputField Id="bill-manual-2" Label="Tax Rate (%)" Placeholder="22" @bind-Value="taxRate" />
+        <ManualInputField Id="bill-manual-3" Label="Bank Account" Placeholder="IT60 X054 2811..." @bind-Value="bankAccount" />
+        <ManualInputField Id="bill-manual-4" Label="Notes" Placeholder="Additional invoice notes..." @bind-Value="notes" />
+    </div>
+</div>
+
+@code {
+    private string invoiceNum = "", issueDate = "", dueDate = "", currency = "", paymentTerms = "";
+    private string amount = "", taxRate = "", bankAccount = "", notes = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) await JS.InvokeVoidAsync("initVirtualKeyboard");
+    }
+
+    public async ValueTask DisposeAsync() => await Task.CompletedTask;
+}

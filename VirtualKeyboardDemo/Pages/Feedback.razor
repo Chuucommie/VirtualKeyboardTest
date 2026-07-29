@@ -1,0 +1,48 @@
+@page "/feedback"
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<PageTitle>Feedback Form</PageTitle>
+
+<div style="padding: 24px 0;">
+    <h2 style="margin-bottom: 8px;">💬 Feedback Form</h2>
+    <p style="color: var(--neutral-foreground-hint, #616161); margin-bottom: 24px;">
+        Customer feedback form with 7 fields — mix of standard and manual keyboard inputs.
+    </p>
+
+    <div style="background: var(--neutral-layer-1, #fafafa); border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+        <h4 style="margin-bottom: 16px;">Standard Fields</h4>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Name</label>
+            <FluentTextInput @bind-Value="name" Placeholder="Your name" Style="width: 100%;" />
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Email</label>
+            <FluentTextInput @bind-Value="email" Placeholder="your@email.com" Style="width: 100%;" />
+        </div>
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Department</label>
+            <FluentTextInput @bind-Value="department" Placeholder="IT / Sales / Support" Style="width: 100%;" />
+        </div>
+    </div>
+
+    <div style="background: var(--neutral-layer-1, #fafafa); border-radius: 8px; padding: 20px; border: 2px solid var(--accent-fill-rest, #0078d4); box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+        <h4 style="margin-bottom: 16px;">Manual Keyboard Fields (use ⌨ to open keyboard)</h4>
+        <ManualInputField Id="fb-manual-1" Label="Subject" Placeholder="Feedback subject" @bind-Value="subject" />
+        <ManualInputField Id="fb-manual-2" Label="Rating (1-5)" Placeholder="5" @bind-Value="rating" />
+        <ManualInputField Id="fb-manual-3" Label="Comments" Placeholder="Tell us what you think..." @bind-Value="comments" />
+        <ManualInputField Id="fb-manual-4" Label="Suggestions" Placeholder="How can we improve?" @bind-Value="suggestions" />
+    </div>
+</div>
+
+@code {
+    private string name = "", email = "", department = "";
+    private string subject = "", rating = "", comments = "", suggestions = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) await JS.InvokeVoidAsync("initVirtualKeyboard");
+    }
+
+    public async ValueTask DisposeAsync() => await Task.CompletedTask;
+}

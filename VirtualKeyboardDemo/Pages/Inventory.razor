@@ -1,0 +1,57 @@
+@page "/inventory"
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<PageTitle>Inventory Form</PageTitle>
+
+<div style="padding: 24px 0;">
+    <h2 style="margin-bottom: 8px;">📦 Inventory Form</h2>
+    <p style="color: var(--neutral-foreground-hint, #616161); margin-bottom: 24px;">
+        Inventory management form with 10 fields — mix of standard and manual keyboard inputs.
+    </p>
+
+    <div style="background: var(--neutral-layer-1, #fafafa); border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+        <h4 style="margin-bottom: 16px;">Standard Fields</h4>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">SKU</label>
+            <FluentTextInput @bind-Value="sku" Placeholder="SKU-001" Style="width: 100%;" />
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Barcode</label>
+            <FluentTextInput @bind-Value="barcode" Placeholder="8012345678901" Style="width: 100%;" />
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Category</label>
+            <FluentTextInput @bind-Value="category" Placeholder="Electronics" Style="width: 100%;" />
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Supplier</label>
+            <FluentTextInput @bind-Value="supplier" Placeholder="Acme Supplies" Style="width: 100%;" />
+        </div>
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Location</label>
+            <FluentTextInput @bind-Value="location" Placeholder="Warehouse A — Shelf 3" Style="width: 100%;" />
+        </div>
+    </div>
+
+    <div style="background: var(--neutral-layer-1, #fafafa); border-radius: 8px; padding: 20px; border: 2px solid var(--accent-fill-rest, #0078d4); box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+        <h4 style="margin-bottom: 16px;">Manual Keyboard Fields (use ⌨ to open keyboard)</h4>
+        <ManualInputField Id="inv-manual-1" Label="Product Name" Placeholder="Wireless Mouse" @bind-Value="productName" />
+        <ManualInputField Id="inv-manual-2" Label="Quantity" Placeholder="150" @bind-Value="quantity" />
+        <ManualInputField Id="inv-manual-3" Label="Unit Price" Placeholder="€ 25.99" @bind-Value="unitPrice" />
+        <ManualInputField Id="inv-manual-4" Label="Reorder Level" Placeholder="20" @bind-Value="reorderLevel" />
+        <ManualInputField Id="inv-manual-5" Label="Description" Placeholder="Product description..." @bind-Value="description" />
+    </div>
+</div>
+
+@code {
+    private string sku = "", barcode = "", category = "", supplier = "", location = "";
+    private string productName = "", quantity = "", unitPrice = "", reorderLevel = "", description = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) await JS.InvokeVoidAsync("initVirtualKeyboard");
+    }
+
+    public async ValueTask DisposeAsync() => await Task.CompletedTask;
+}

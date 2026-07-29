@@ -1,0 +1,52 @@
+@page "/customer"
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<PageTitle>Customer Form</PageTitle>
+
+<div style="padding: 24px 0;">
+    <h2 style="margin-bottom: 8px;">👤 Customer Form</h2>
+    <p style="color: var(--neutral-foreground-hint, #616161); margin-bottom: 24px;">
+        Customer registration form with 8 fields — mix of standard and manual keyboard inputs.
+    </p>
+
+    <div style="background: var(--neutral-layer-1, #fafafa); border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+        <h4 style="margin-bottom: 16px;">Standard Fields</h4>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">First Name</label>
+            <FluentTextInput @bind-Value="firstName" Placeholder="John" Style="width: 100%;" />
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Last Name</label>
+            <FluentTextInput @bind-Value="lastName" Placeholder="Doe" Style="width: 100%;" />
+        </div>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Email</label>
+            <FluentTextInput @bind-Value="email" Placeholder="john@example.com" Style="width: 100%;" />
+        </div>
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px;">Phone</label>
+            <FluentTextInput @bind-Value="phone" Placeholder="+1 555 0000" Style="width: 100%;" />
+        </div>
+    </div>
+
+    <div style="background: var(--neutral-layer-1, #fafafa); border-radius: 8px; padding: 20px; border: 2px solid var(--accent-fill-rest, #0078d4); box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+        <h4 style="margin-bottom: 16px;">Manual Keyboard Fields (use ⌨ to open keyboard)</h4>
+        <ManualInputField Id="cust-manual-1" Label="Company Name" Placeholder="Acme Corp" @bind-Value="company" />
+        <ManualInputField Id="cust-manual-2" Label="VAT Number" Placeholder="IT12345678901" @bind-Value="vat" />
+        <ManualInputField Id="cust-manual-3" Label="Address" Placeholder="Via Roma 1" @bind-Value="address" />
+        <ManualInputField Id="cust-manual-4" Label="City" Placeholder="Treviso" @bind-Value="city" />
+    </div>
+</div>
+
+@code {
+    private string firstName = "", lastName = "", email = "", phone = "";
+    private string company = "", vat = "", address = "", city = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) await JS.InvokeVoidAsync("initVirtualKeyboard");
+    }
+
+    public async ValueTask DisposeAsync() => await Task.CompletedTask;
+}
